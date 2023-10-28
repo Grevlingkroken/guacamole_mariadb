@@ -90,7 +90,7 @@ The following part of docker-compose.yml will create an instance of MariaDB usin
 ...
 
 ~~~
-# MariaDB notes
+#### MariaDB notes
 By default MariaDB has a samaple-db with anonymous access enabled. It might be a good idea to enter the container and do some extra work to harden it
 
 ~~~bash
