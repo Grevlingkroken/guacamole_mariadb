@@ -17,7 +17,7 @@ Clone the GIT repository and start guacamole:
 
 ~~~bash
 git clone "https://github.com/Grevlingkroken/guacamole_mariadb.git"
-cd guacamole-docker-compose
+cd guacamole_mariadb
 ./prepare.sh
 ~~~
 I prefer to keep passwords/secrets outside the compose-files, so edit the .env file and set your password for the MariaDB-users root and guacamole.
