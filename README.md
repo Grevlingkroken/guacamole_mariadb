@@ -41,7 +41,7 @@ The following part of docker-compose.yml will create a network with name `guacne
 ~~~python
 ...
 # networks
-# create a network 'guacnetwork_compose' in mode 'bridged'
+# create a network 'guacnet' in mode 'bridged'
 networks:
   guacnet:
     driver: bridge
@@ -50,14 +50,14 @@ networks:
 
 ### Services
 #### guacd
-The following part of docker-compose.yml will create the guacd service. guacd is the heart of Guacamole which dynamically loads support for remote desktop protocols (called "client plugins") and connects them to remote desktops based on instructions received from the web application. The container will be called `guacd_compose` based on the docker image `guacamole/guacd` connected to our previously created network `guacnet`. Additionally we map the 2 local folders `./drive` and `./record` into the container. We can use them later to map user drives and store recordings of sessions.
+The following part of docker-compose.yml will create the guacd service. guacd is the heart of Guacamole which dynamically loads support for remote desktop protocols (called "client plugins") and connects them to remote desktops based on instructions received from the web application. The container will be called `guacd` based on the docker image `guacamole/guacd` connected to our previously created network `guacnet`. Additionally we map the 2 local folders `./drive` and `./record` into the container. We can use them later to map user drives and store recordings of sessions.
 
 ~~~python
 ...
 services:
   # guacd
   guacd:
-    container_name: guacd_compose
+    container_name: guacd
     image: guacamole/guacd
     networks:
       guacnet:
@@ -74,7 +74,7 @@ The following part of docker-compose.yml will create an instance of MariaDB usin
 ~~~python
 ...
   mariadb:
-    container_name: mariadb_guacamole_compose
+    container_name: mariadb_guacamole
     image: mariadb:10.11.5
     environment:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
@@ -92,14 +92,14 @@ The following part of docker-compose.yml will create an instance of MariaDB usin
 ~~~
 
 ### Guacamole
-The following part of docker-compose.yml will create an instance of guacamole by using the docker image `guacamole` from docker hub. It is also highly configurable using environment variables. In this setup it is configured to connect to the previously created postgres instance using a username and password and the database `guacamole_db`. Guacamole has native support for TOTP, so I highly recommend enabling this as soon as you have verified that setup is working properly. Port 8080 is only exposed locally! We will attach an instance of nginx for public facing of it in the next step.
+The following part of docker-compose.yml will create an instance of guacamole by using the docker image `guacamole` from docker hub. It is also highly configurable using environment variables. In this setup it is configured to connect to the previously created MariaDDB instance using a username and password and the database `guacamole_db`. Guacamole also has native support for TOTP, so I highly recommend enabling this as soon as you have verified that setup is working properly. Port 8080 is only exposed locally! We will attach an instance of nginx for public facing of it in the next step.
 
 ~~~python
 ...
 
   # guacamole
   guacamole:
-    container_name: guacamole_compose
+    container_name: guacamole
     depends_on:
     - guacd
     - mariadb
@@ -128,7 +128,7 @@ The following part of docker-compose.yml will create an instance of nginx that m
 ...
   # nginx
   nginx:
-   container_name: nginx_guacamole_compose
+   container_name: nginx_guacamole
    restart: always
    image: nginx
    volumes:
@@ -159,9 +159,6 @@ by nginx for https.
 ## reset.sh
 To reset everything to the beginning, just run `./reset.sh`.
 
-## WOL
-
-Wake on LAN (WOL) does not work and I will not fix that because it is beyound the scope of this repo. But [zukkie777](https://github.com/zukkie777) who also filed [this issue](https://github.com/boschkundendienst/guacamole-docker-compose/issues/12) fixed it. You can read about it on the [Guacamole mailing list](http://apache-guacamole-general-user-mailing-list.2363388.n4.nabble.com/How-to-docker-composer-for-WOL-td9164.html)
 
 **Disclaimer**
 
