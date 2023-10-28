@@ -88,7 +88,7 @@ The following part of docker-compose.yml will create an instance of MariaDB usin
 ~~~
 
 ### Guacamole
-The following part of docker-compose.yml will create an instance of guacamole by using the docker image `guacamole` from docker hub. It is also highly configurable using environment variables. In this setup it is configured to connect to the previously created postgres instance using a username and password and the database `guacamole_db`. Port 8080 is only exposed locally! We will attach an instance of nginx for public facing of it in the next step.
+The following part of docker-compose.yml will create an instance of guacamole by using the docker image `guacamole` from docker hub. It is also highly configurable using environment variables. In this setup it is configured to connect to the previously created postgres instance using a username and password and the database `guacamole_db`. Guacamole has native support for TOTP, so I highly recommend enabling this as soon as you have verified that setup is working properly. Port 8080 is only exposed locally! We will attach an instance of nginx for public facing of it in the next step.
 
 ~~~python
 ...
@@ -105,6 +105,7 @@ The following part of docker-compose.yml will create an instance of guacamole by
       MYSQL_HOSTNAME: mariadb
       MYSQL_PASSWORD: ${GUACAMOLE_PASSWORD}
       MYSQL_USER: guacamole_user
+      # TOTP_ENABLED: "true" #Enable this when you know the install is working
     image: guacamole/guacamole
     links:
     - guacd
