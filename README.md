@@ -16,7 +16,7 @@ You need a working **docker** installation and **docker-compose** running on you
 Clone the GIT repository and start guacamole:
 
 ~~~bash
-git clone "https://github.com/grevlingkroken/guacamole-docker-compose.git"
+git clone "https://github.com/Grevlingkroken/guacamole_mariadb.git"
 cd guacamole-docker-compose
 ./prepare.sh
 ~~~
