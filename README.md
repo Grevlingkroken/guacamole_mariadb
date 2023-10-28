@@ -90,59 +90,6 @@ The following part of docker-compose.yml will create an instance of MariaDB usin
 ...
 
 ~~~
-
-### Guacamole
-The following part of docker-compose.yml will create an instance of guacamole by using the docker image `guacamole` from docker hub. It is also highly configurable using environment variables. In this setup it is configured to connect to the previously created MariaDDB instance using a username and password and the database `guacamole_db`. Guacamole also has native support for TOTP, so I highly recommend enabling this as soon as you have verified that setup is working properly. Port 8080 is only exposed locally! We will attach an instance of nginx for public facing of it in the next step.
-
-~~~python
-...
-
-  # guacamole
-  guacamole:
-    container_name: guacamole
-    depends_on:
-    - guacd
-    - mariadb
-    environment:
-      GUACD_HOSTNAME: guacd
-      MYSQL_DATABASE: guacamole_db
-      MYSQL_HOSTNAME: mariadb
-      MYSQL_PASSWORD: ${GUACAMOLE_PASSWORD}
-      MYSQL_USER: guacamole_user
-      # TOTP_ENABLED: "true" #Enable this when you know the install is working
-    image: guacamole/guacamole
-    links:
-    - guacd
-    networks:
-      guacnet:
-    ports:
-    - 8080/tcp
-    restart: always
-...
-~~~
-
-#### nginx
-The following part of docker-compose.yml will create an instance of nginx that maps the public port 8443 to the internal port 443. The internal port 443 is then mapped to guacamole using the `./nginx/templates/guacamole.conf.template` file. The container will use the previously generated (`prepare.sh`) self-signed certificate in `./nginx/ssl/` with `./nginx/ssl/self-ssl.key` and `./nginx/ssl/self.cert`.
-
-~~~python
-...
-  # nginx
-  nginx:
-   container_name: nginx_guacamole
-   restart: always
-   image: nginx
-   volumes:
-   - ./nginx/templates:/etc/nginx/templates:ro
-   - ./nginx/ssl/self.cert:/etc/nginx/ssl/self.cert:ro
-   - ./nginx/ssl/self-ssl.key:/etc/nginx/ssl/self-ssl.key:ro
-   ports:
-   - 8443:443
-   links:
-   - guacamole
-   networks:
-     guacnet:
-...
-~~~
 ## MariaDB notes
 By default MariaDB has a samaple-db with anonymous access enabled. It might be a good idea to enter the container and do some extra work to harden it
 
@@ -215,6 +162,60 @@ Cleaning up...
 All done!  If you've completed all of the above steps, your MariaDB
 installation should now be secure.
 ~~~~~~
+
+### Guacamole
+The following part of docker-compose.yml will create an instance of guacamole by using the docker image `guacamole` from docker hub. It is also highly configurable using environment variables. In this setup it is configured to connect to the previously created MariaDDB instance using a username and password and the database `guacamole_db`. Guacamole also has native support for TOTP, so I highly recommend enabling this as soon as you have verified that setup is working properly. Port 8080 is only exposed locally! We will attach an instance of nginx for public facing of it in the next step.
+
+~~~python
+...
+
+  # guacamole
+  guacamole:
+    container_name: guacamole
+    depends_on:
+    - guacd
+    - mariadb
+    environment:
+      GUACD_HOSTNAME: guacd
+      MYSQL_DATABASE: guacamole_db
+      MYSQL_HOSTNAME: mariadb
+      MYSQL_PASSWORD: ${GUACAMOLE_PASSWORD}
+      MYSQL_USER: guacamole_user
+      # TOTP_ENABLED: "true" #Enable this when you know the install is working
+    image: guacamole/guacamole
+    links:
+    - guacd
+    networks:
+      guacnet:
+    ports:
+    - 8080/tcp
+    restart: always
+...
+~~~
+
+#### nginx
+The following part of docker-compose.yml will create an instance of nginx that maps the public port 8443 to the internal port 443. The internal port 443 is then mapped to guacamole using the `./nginx/templates/guacamole.conf.template` file. The container will use the previously generated (`prepare.sh`) self-signed certificate in `./nginx/ssl/` with `./nginx/ssl/self-ssl.key` and `./nginx/ssl/self.cert`.
+
+~~~python
+...
+  # nginx
+  nginx:
+   container_name: nginx_guacamole
+   restart: always
+   image: nginx
+   volumes:
+   - ./nginx/templates:/etc/nginx/templates:ro
+   - ./nginx/ssl/self.cert:/etc/nginx/ssl/self.cert:ro
+   - ./nginx/ssl/self-ssl.key:/etc/nginx/ssl/self-ssl.key:ro
+   ports:
+   - 8443:443
+   links:
+   - guacamole
+   networks:
+     guacnet:
+...
+~~~
+
 
 
 
