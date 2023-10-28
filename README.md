@@ -20,7 +20,11 @@ git clone "https://github.com/Grevlingkroken/guacamole_mariadb.git"
 cd guacamole_mariadb
 sudo bash prepare.sh
 ~~~
-I prefer to keep passwords/secrets outside the compose-files, so edit the .env file and set your password for the MariaDB-users root and guacamole.
+I prefer to keep passwords/secrets outside the compose-files, so edit the .env file and set your password for the MariaDB-users root and guacamole like
+~~~
+GUACAMOLE_PASSWORD=MyGuacuser-pwd
+MARIADB_ROOT_PASSWORD=MyRootDB-pwd
+~~~
 
 Then run
 ~~~bash
